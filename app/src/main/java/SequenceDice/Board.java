@@ -67,8 +67,28 @@ public class Board {
     }
 
     public boolean currentPlayerIsAbleToPlay(Player currentPlayer, int number){
+        if(number == 10){
+            //if opponent has token on board
+            return opponentHasTokenOnBoard(currentPlayer);
+
+        }
+        if(number == 11){
+            //if empty cell exists
+            return !findAllEmptyCells().isEmpty();
+        }
         if(validCellExists(number)) return true;
         if(!currentPlayerHasAllCellsOfNumber(number, currentPlayer)) return true;
+        return false;
+    }
+
+    public boolean opponentHasTokenOnBoard(Player currentPlayer){
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if(board[i][j].getOccupant() != null && !board[i][j].getOccupant().isOnSameTeam(currentPlayer))
+                    return true;
+            }
+        }
+
         return false;
     }
     public boolean currentPlayerHasAllCellsOfNumber(int number, Player currentPlayer){

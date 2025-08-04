@@ -1,9 +1,9 @@
 package com.example.assignment1task2;
 
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
+import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
@@ -27,13 +27,12 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
     TextView playerTurnHeadingTV;
     TextView rollDiceTV;
     Button rollDiceButton;
-    TextView gameOverTV;
 
     Drawable playerTurnHeadingBackground;
     Drawable cellButtonBackground;
-    int[] colorsDark;
+    int[] colors;
+    View.OnClickListener rollDiceButtonMainFunction;
 
-    //TODO make sure all edge cases are fixed (rolling defensive roll on first roll)
     //TODO welcome screen
     //TODO game over fragment
     //TODO https://www.youtube.com/watch?v=wNSuMtXXYio
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        colorsDark = new int[]{ContextCompat.getColor(this, R.color.red), ContextCompat.getColor(this, R.color.green), ContextCompat.getColor(this, R.color.blue)};
+        colors = new int[]{ContextCompat.getColor(this, R.color.red), ContextCompat.getColor(this, R.color.green), ContextCompat.getColor(this, R.color.blue)};
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -60,11 +59,14 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
         playerTurnHeadingTV = findViewById(R.id.playerTurnHeadingTV);
         rollDiceTV = findViewById(R.id.rollDiceTV);
         rollDiceButton = findViewById(R.id.rollDiceButton);
-        rollDiceButton.setOnClickListener(v -> {
+
+        rollDiceButtonMainFunction = v -> {
             gameModel.rollDice();
-        });
+        };
+        rollDiceButton.setOnClickListener(rollDiceButtonMainFunction);
+
         gridLayout = findViewById(R.id.boardGridLayout);
-        gameOverTV = findViewById(R.id.gameOverTV);
+
 
         playerTurnHeadingBackground = ContextCompat.getDrawable(this, R.drawable.player_turn_heading_background);
         cellButtonBackground = ContextCompat.getDrawable(this, R.drawable.cell_button_background);
@@ -75,8 +77,48 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
         gameModel.addObserver(this);
 
         drawGrid();
-
         gameModel.startGame();
+    }
+
+    @Override
+    public void onGameEvent(GameEvent event) {
+        switch (event.getType()) {
+            case NEXT_PLAYER_TURN:
+                //updates player turn heading
+                playerTurnHeadingTV.setText(event.getMessage());
+                playerTurnHeadingBackground.setTint(colors[gameModel.getCurrentPlayer().getNumber()]);
+                playerTurnHeadingTV.setBackground(playerTurnHeadingBackground);
+
+                rollDiceTV.setText("Roll the dice");
+                break;
+            case NO_POSSIBLE_MOVE:
+                rollDiceTV.setText(event.getMessage());
+                rollDiceButton.setText("Forfeit turn");
+                rollDiceButton.setOnClickListener(v -> {
+                    gameModel.nextTurn();
+                    rollDiceButton.setText("Roll Dice");
+                    rollDiceButton.setOnClickListener(rollDiceButtonMainFunction);
+                });
+                break;
+            case DICE_ROll:
+                if(gameModel.getBoard().validCellExists((int)event.getCargo()))
+                    rollDiceTV.setText(event.getMessage());
+                else
+                    rollDiceTV.setText("You rolled " + event.getCargo() + ", no valid cell exists, replace an opponents token.");
+                break;
+            case WILD_DICE_ROLL:
+                rollDiceTV.setText(event.getMessage());
+                break;
+            case DEFENSIVE_DICE_ROLL:
+                rollDiceTV.setText(event.getMessage());
+                break;
+            case EXTRA_TURN_DICE_ROLL:
+                rollDiceTV.setText(event.getMessage());
+                break;
+            case GAME_OVER:
+
+                break;
+        }
     }
 
     public void drawGrid(){
@@ -106,53 +148,20 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
 
                 Cell[][] cells = board.getBoard();
                 if(cells[i][j].getOccupant() != null){
-                    button.setBackgroundColor(colorsDark[(cells[i][j].getOccupant().getNumber())]);
+                    button.setBackgroundColor(colors[(cells[i][j].getOccupant().getNumber())]);
                 }
 
                 int row = i;
                 int col = j;
                 button.setOnClickListener(v -> {
                     if(gameModel.processChoice(new int[]{row, col})){
-                        rollDiceTV.setText("Roll the dice");
+
                     }
                     drawGrid();
                 });
 
                 gridLayout.addView(button);
             }
-        }
-    }
-
-    @Override
-    public void onGameEvent(GameEvent event) {
-        int[] choice;
-        switch (event.getType()) {
-            case NEXT_PLAYER_TURN:
-                playerTurnHeadingTV.setText(event.getMessage());
-
-
-                playerTurnHeadingBackground.setTint(colorsDark[gameModel.getCurrentPlayer().getNumber()]);
-                playerTurnHeadingTV.setBackground(playerTurnHeadingBackground);
-                break;
-            case DICE_ROll:
-                if(gameModel.getBoard().validCellExists((int)event.getCargo()))
-                    rollDiceTV.setText(event.getMessage());
-                else
-                    rollDiceTV.setText(event.getMessage() + ", no valid cell exists, replace an opponents token.");
-                break;
-            case WILD_DICE_ROLL:
-                rollDiceTV.setText(event.getMessage());
-                break;
-            case DEFENSIVE_DICE_ROLL:
-                rollDiceTV.setText(event.getMessage());
-                break;
-            case EXTRA_TURN_DICE_ROLL:
-                rollDiceTV.setText(event.getMessage());
-                break;
-            case GAME_OVER:
-                gameOverTV.setText(event.getMessage());
-                gameOverTV.setVisibility(TextView.VISIBLE);
-                break;
         }
     }
 }

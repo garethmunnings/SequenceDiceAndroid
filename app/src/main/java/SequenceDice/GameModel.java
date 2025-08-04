@@ -66,39 +66,48 @@ public class GameModel {
     }
 
     public void rollDice() {
+        //check if player has already rolled this turn
         if(playerHasRolled)
             return;
+
+        //get what dice outcome
         int[] outcome = dice.roll();
         int total = outcome[0] + outcome[1];
+
+        //check if player can play a move
+        if(!board.currentPlayerIsAbleToPlay(currentPlayer, total)) {
+            notifyObservers(new GameEvent(GameEventType.NO_POSSIBLE_MOVE, "You rolled " + total + ", you no valid moves.", currentPlayer));
+            return;
+        }
+
+        //notify controller of roll
         GameEvent gameEvent;
 
         if(total == 10){
             //defensive roll
             //remove opponents tokens anywhere except 2 or 12
-            List<int[]> opponentsCells = board.findOpponentsCellsNotOnGrey(currentPlayer);
             gameEvent = new GameEvent(GameEventType.DEFENSIVE_DICE_ROLL, "You rolled " + total + ", defensive roll", total);
+            playerHasRolled = true;
         }
         else if(total == 11){
             //wild roll
-            List<int[]> emptyCells = board.findAllEmptyCells();
             //place token on any empty space
             gameEvent = new GameEvent(GameEventType.WILD_DICE_ROLL, "You rolled " + total+ ", wild roll", total);
+            playerHasRolled = true;
         }
         else {
-            //check for empty cells of same number as roll
-            List<int[]> validCells = board.findValidCells(total);
-
-            //prompt user to pick one of the cells
+            //double roll
             if(total == 2 || total == 12)
             {
-                gameEvent = new GameEvent(GameEventType.EXTRA_TURN_DICE_ROLL, "You rolled " + total + ", roll again", total);
+                gameEvent = new GameEvent(GameEventType.EXTRA_TURN_DICE_ROLL, "You rolled " + total + ", pick a cell and roll again", total);
             }
             else{
                 gameEvent = new GameEvent(GameEventType.DICE_ROll, "You rolled " + total + ", pick a cell", total);
+                playerHasRolled = true;
             }
 
         }
-        playerHasRolled = true;
+
         notifyObservers(gameEvent);
     }
 
