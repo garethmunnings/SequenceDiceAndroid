@@ -51,6 +51,8 @@ public class GameModel {
     }
 
     public Team getCurrentTeam(){
+        if(teams.length == 0)
+            return null;
         for(Team team: teams){
             if(team.getPlayers()[0] == currentPlayer || team.getPlayers()[1] == currentPlayer)
                 return team;
@@ -186,5 +188,8 @@ public class GameModel {
 
     public Board getBoard() {
         return board;
+    }
+    public int getNumOfPlayers(){
+        return numOfPlayers;
     }
 }

@@ -34,11 +34,9 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
     int[] colors;
     View.OnClickListener rollDiceButtonMainFunction;
 
-    //TODO style radio buttons
     //TODO game over fragment
     //TODO https://www.youtube.com/watch?v=wNSuMtXXYio
     //TODO redo win condition logic
-    //TODO how to play fragment
 
 
     @Override
@@ -47,7 +45,7 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        colors = new int[]{ContextCompat.getColor(this, R.color.red), ContextCompat.getColor(this, R.color.green), ContextCompat.getColor(this, R.color.blue)};
+        colors = new int[]{ContextCompat.getColor(this, R.color.green), ContextCompat.getColor(this, R.color.blue), ContextCompat.getColor(this, R.color.red)};
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -74,9 +72,9 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
 
         //end region
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        int numberOfPlayers = bundle.getInt("numberOfPlayers");
-        gameModel = new GameModel(4);
+
+        int numberOfPlayers = intent.getIntExtra("numberOfPlayers", 2);
+        gameModel = new GameModel(numberOfPlayers);
         gameModel.addObserver(this);
 
         drawGrid();
@@ -89,7 +87,11 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
             case NEXT_PLAYER_TURN:
                 //updates player turn heading
                 playerTurnHeadingTV.setText(event.getMessage());
-                playerTurnHeadingBackground.setTint(colors[gameModel.getCurrentTeam().getNumber()]);
+                if(gameModel.getNumOfPlayers() > 3) {
+                    playerTurnHeadingBackground.setTint(colors[gameModel.getCurrentTeam().getNumber() - 1]);
+                }
+                else
+                    playerTurnHeadingBackground.setTint(colors[gameModel.getCurrentPlayer().getNumber()]);
                 playerTurnHeadingTV.setBackground(playerTurnHeadingBackground);
 
                 rollDiceTV.setText("Roll the dice");
@@ -119,7 +121,10 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
                 rollDiceTV.setText(event.getMessage());
                 break;
             case GAME_OVER:
-
+                GameOverFragment gof = new GameOverFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("player", event.getMessage());
+                gof.show(getSupportFragmentManager(), "Game Over");
                 break;
         }
     }
@@ -151,15 +156,22 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
 
                 Cell[][] cells = board.getBoard();
                 if(cells[i][j].getOccupant() != null){
-                    button.setBackgroundColor(colors[(cells[i][j].getOccupant().getNumber())]);
+                    //find out who the occupant belongs to
+                    if(gameModel.getNumOfPlayers() <= 3) {
+                        button.setBackgroundColor(colors[(cells[i][j].getOccupant().getNumber())]);
+                    }
+                    else {
+                        if (cells[i][j].getOccupant().getNumber() == 1 || cells[i][j].getOccupant().getNumber() == 3)
+                            button.setBackgroundColor(colors[0]);
+                        else
+                            button.setBackgroundColor(colors[1]);
+                    }
                 }
 
                 int row = i;
                 int col = j;
                 button.setOnClickListener(v -> {
-                    if(gameModel.processChoice(new int[]{row, col})){
-
-                    }
+                    gameModel.processChoice(new int[]{row, col});
                     drawGrid();
                 });
 

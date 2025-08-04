@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class StartGame extends AppCompatActivity {
-    private int numberOfPlayers = 0;
+    private int numberOfPlayers = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +39,7 @@ public class StartGame extends AppCompatActivity {
         playButton.setOnClickListener(v -> {
 
             Intent intent = new Intent(StartGame.this, SequenceDiceController.class);
-            Bundle bundle = new Bundle();
-            bundle.putInt("numberOfPlayers", numberOfPlayers);
-            intent.putExtras(bundle);
+            intent.putExtra("numberOfPlayers", numberOfPlayers);
             startActivity(intent);
         });
 

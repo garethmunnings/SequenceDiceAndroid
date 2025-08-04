@@ -72,6 +72,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@drawable/radio_group_background"
+        android:padding="4dp"
         app:layout_constraintBottom_toTopOf="@+id/playButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,18 +84,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
+            android:buttonTint="@color/black"
+
             android:text="2" />
 
         <RadioButton
             android:id="@+id/threePlayer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/black"
             android:text="3" />
 
         <RadioButton
             android:id="@+id/fourPlayer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/black"
             android:text="4" />
     </RadioGroup>
 
