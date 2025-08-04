@@ -7,6 +7,7 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 
 import SequenceDice.Board;
+import SequenceDice.Cell;
 import SequenceDice.GameEvent;
 import SequenceDice.GameModel;
 import SequenceDice.GameObserver;
@@ -18,12 +19,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity implements GameObserver {
-
     GameModel gameModel;
     GridLayout gridLayout;
     TextView playerTurnHeadingTV;
     TextView rollDiceTV;
     Button rollDiceButton;
+    TextView gameOverTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
         rollDiceButton.setOnClickListener(v -> {
             gameModel.rollDice();
         });
+        gridLayout = findViewById(R.id.boardGridLayout);
+        gameOverTV = findViewById(R.id.gameOverTV);
 
         //end region
 
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
     }
 
     public void drawGrid(){
-        gridLayout = findViewById(R.id.boardGridLayout);
+        gridLayout.removeAllViews();
         Board board = gameModel.getBoard();
         int[][] numbers = board.getNumbers();
 
@@ -74,14 +77,18 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
                 params.height = 120;
                 button.setLayoutParams(params);
 
+                Cell[][] cells = board.getBoard();
+                if(cells[i][j].getOccupant() != null){
+                    button.setBackgroundColor(Color.parseColor(cells[i][j].getOccupant().getColour()));
+                }
+
                 int row = i;
                 int col = j;
                 button.setOnClickListener(v -> {
-                    if(gameModel.processChoice(new int[]{row, col})) {
-                        String colour = gameModel.getCurrentPlayer().getColour();
-                        button.setBackgroundColor(Color.parseColor(colour));
+                    if(gameModel.processChoice(new int[]{row, col})){
+                        rollDiceTV.setText("Roll the dice!");
                     }
-
+                    drawGrid();
                 });
 
                 gridLayout.addView(button);
@@ -95,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
         switch (event.getType()) {
             case NEXT_PLAYER_TURN:
                 playerTurnHeadingTV.setText(event.getMessage());
+                playerTurnHeadingTV.setBackgroundColor(Color.parseColor(gameModel.getCurrentPlayer().getColour()));
                 break;
             case DICE_ROll:
                 rollDiceTV.setText(event.getMessage());
@@ -109,7 +117,8 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
                 rollDiceTV.setText(event.getMessage());
                 break;
             case GAME_OVER:
-                System.out.println(event.getMessage());
+                gameOverTV.setText(event.getMessage());
+                gameOverTV.setVisibility(TextView.VISIBLE);
                 break;
         }
     }

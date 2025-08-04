@@ -48,10 +48,16 @@
             android:id="@+id/rollDiceTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="You rolled "
+            android:text="Roll the dice!"
             android:textSize="24sp"
             android:gravity="center"
             android:padding="24dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/gameOverTV"
+            android:visibility="invisible"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

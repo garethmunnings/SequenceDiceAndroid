@@ -86,7 +86,7 @@ public class GameModel {
             //prompt user to pick one of the cells
             if(total == 2 || total == 12)
             {
-                gameEvent = new GameEvent(GameEventType.EXTRA_TURN_DICE_ROLL, "You rolled " + total + ", extra turn!", total);
+                gameEvent = new GameEvent(GameEventType.EXTRA_TURN_DICE_ROLL, "You rolled " + total + ", roll again!", total);
             }
             else{
                 gameEvent = new GameEvent(GameEventType.DICE_ROll, "You rolled " + total, total);
@@ -110,12 +110,14 @@ public class GameModel {
                 if(board.isEmptyCellCoordinates(coords)){
                     placeToken(coords);
                     nextTurn();
+                    return true;
                 }
                 break;
             case DEFENSIVE_DICE_ROLL:
                 if(board.isOppenentsCellsNotOnGrey(coords, currentPlayer)) {
                     removeToken(coords);
                     nextTurn();
+                    return true;
                 }
                 break;
             case EXTRA_TURN_DICE_ROLL:
@@ -140,6 +142,9 @@ public class GameModel {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+    public Player getPreviousPlayer(){
+        return players[(currentPlayerIndex - 1 + numOfPlayers) % numOfPlayers];
     }
 
     private void notifyObservers(GameEvent gameEvent) {
