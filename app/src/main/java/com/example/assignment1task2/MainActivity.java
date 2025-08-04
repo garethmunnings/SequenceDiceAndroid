@@ -33,6 +33,10 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
     Drawable cellButtonBackground;
     int[] colorsDark;
 
+    //TODO make sure all edge cases are fixed (rolling defensive roll on first roll)
+    //TODO welcome screen
+    //TODO game over fragment
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
