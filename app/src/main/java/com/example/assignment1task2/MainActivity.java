@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
     //TODO make sure all edge cases are fixed (rolling defensive roll on first roll)
     //TODO welcome screen
     //TODO game over fragment
+    //TODO https://www.youtube.com/watch?v=wNSuMtXXYio
+    //TODO redo win condition logic
 
 
     @Override
