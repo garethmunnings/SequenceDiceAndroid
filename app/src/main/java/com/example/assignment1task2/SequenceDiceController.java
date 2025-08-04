@@ -34,10 +34,6 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
     int[] colors;
     View.OnClickListener rollDiceButtonMainFunction;
 
-    //TODO game over fragment
-    //TODO https://www.youtube.com/watch?v=wNSuMtXXYio
-    //TODO redo win condition logic
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
