@@ -1,5 +1,6 @@
 package com.example.assignment1task2;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
@@ -21,7 +22,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class MainActivity extends AppCompatActivity implements GameObserver {
+public class SequenceDiceController extends AppCompatActivity implements GameObserver {
     GameModel gameModel;
     GridLayout gridLayout;
     TextView playerTurnHeadingTV;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
     int[] colors;
     View.OnClickListener rollDiceButtonMainFunction;
 
-    //TODO welcome screen
+    //TODO style radio buttons
     //TODO game over fragment
     //TODO https://www.youtube.com/watch?v=wNSuMtXXYio
     //TODO redo win condition logic
@@ -72,8 +73,10 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
         cellButtonBackground = ContextCompat.getDrawable(this, R.drawable.cell_button_background);
 
         //end region
-
-        gameModel = new GameModel(3);
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        int numberOfPlayers = bundle.getInt("numberOfPlayers");
+        gameModel = new GameModel(4);
         gameModel.addObserver(this);
 
         drawGrid();
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
             case NEXT_PLAYER_TURN:
                 //updates player turn heading
                 playerTurnHeadingTV.setText(event.getMessage());
-                playerTurnHeadingBackground.setTint(colors[gameModel.getCurrentPlayer().getNumber()]);
+                playerTurnHeadingBackground.setTint(colors[gameModel.getCurrentTeam().getNumber()]);
                 playerTurnHeadingTV.setBackground(playerTurnHeadingBackground);
 
                 rollDiceTV.setText("Roll the dice");

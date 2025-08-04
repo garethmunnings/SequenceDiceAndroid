@@ -5,7 +5,7 @@ import java.util.List;
 
 public class GameModel {
     private List<GameObserver> observers = new ArrayList<>();
-    private int numOfPlayers;
+    private final int numOfPlayers;
     private Player currentPlayer;
     private int currentPlayerIndex = -1;
     private Player[] players;
@@ -43,11 +43,19 @@ public class GameModel {
             players = new Player[]{player1, player2, player3, player4};
 
             teams = new Team[2];
-            teams[0] = new Team(colours[0], new Player[]{player1, player3});
-            teams[1] = new Team(colours[1], new Player[]{player2, player4});
+            teams[0] = new Team(colours[0],1, new Player[]{player1, player3});
+            teams[1] = new Team(colours[1],2, new Player[]{player2, player4});
             return true;
         }
         return false;
+    }
+
+    public Team getCurrentTeam(){
+        for(Team team: teams){
+            if(team.getPlayers()[0] == currentPlayer || team.getPlayers()[1] == currentPlayer)
+                return team;
+        }
+        return null;
     }
 
     public void addObserver(GameObserver observer) {
