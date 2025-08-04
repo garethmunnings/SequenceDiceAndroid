@@ -40,16 +40,51 @@ public class Board {
         return validCells;
     }
 
+    public boolean validCellExists(int number)  {
+        List<int[]> validCells = findValidCells(number);
+        if(validCells.size() > 0) return true;
+        return false;
+    }
+
     /**
      * Checks if the given coordinates (row, column) are valid for placing a token on the board.
      *
      * @param number
      * @return
      */
-    public boolean isValidCellCoordinates(int[] coords, int number) {
+    public boolean isValidCellCoordinates(int[] coords, int number, Player currentPlayer) {
         int row = coords[0];
         int col = coords[1];
-        return board[row][col].getNumber() == number && board[row][col].isEmpty();
+        if(validCellExists(number)) {
+            return board[row][col].getNumber() == number && board[row][col].isEmpty();
+        }
+        else if(!currentPlayerHasAllCellsOfNumber(number, currentPlayer)){
+            return board[row][col].getNumber() == number && !board[row][col].getOccupant().isOnSameTeam(currentPlayer);
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean currentPlayerIsAbleToPlay(Player currentPlayer, int number){
+        if(validCellExists(number)) return true;
+        if(!currentPlayerHasAllCellsOfNumber(number, currentPlayer)) return true;
+        return false;
+    }
+    public boolean currentPlayerHasAllCellsOfNumber(int number, Player currentPlayer){
+        if(validCellExists(number))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if(!board[i][j].isEmpty() && !board[i][j].getOccupant().isOnSameTeam(currentPlayer) && board[i][j].getNumber() == number){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     public List<int[]> findAllEmptyCells(){
         List<int[]> validCells = new ArrayList<>();
@@ -72,7 +107,7 @@ public class Board {
     public boolean isOppenentsCellsNotOnGrey(int[] coords, Player currentPlayer){
         int row = coords[0];
         int col = coords[1];
-        return board[row][col].getOccupant() != null && !board[row][col].getOccupant().equals(currentPlayer) && board[row][col].getNumber() != 2 && board[row][col].getNumber() != 12;
+        return board[row][col].getOccupant() != null && !board[row][col].getOccupant().isOnSameTeam(currentPlayer) && board[row][col].getNumber() != 2 && board[row][col].getNumber() != 12;
     }
 
     public List<int[]> findOpponentsCellsNotOnGrey(Player currentPlayer){

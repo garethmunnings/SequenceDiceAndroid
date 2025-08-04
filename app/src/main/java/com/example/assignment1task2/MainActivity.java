@@ -1,7 +1,9 @@
 package com.example.assignment1task2;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
@@ -14,6 +16,7 @@ import SequenceDice.GameObserver;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -26,13 +29,18 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
     Button rollDiceButton;
     TextView gameOverTV;
 
+    Drawable playerTurnHeadingBackground;
+    Drawable cellButtonBackground;
+    int[] colorsDark;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-
+        colorsDark = new int[]{ContextCompat.getColor(this, R.color.red), ContextCompat.getColor(this, R.color.green), ContextCompat.getColor(this, R.color.blue)};
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -51,9 +59,12 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
         gridLayout = findViewById(R.id.boardGridLayout);
         gameOverTV = findViewById(R.id.gameOverTV);
 
+        playerTurnHeadingBackground = ContextCompat.getDrawable(this, R.drawable.player_turn_heading_background);
+        cellButtonBackground = ContextCompat.getDrawable(this, R.drawable.cell_button_background);
+
         //end region
 
-        gameModel = new GameModel(2);
+        gameModel = new GameModel(3);
         gameModel.addObserver(this);
 
         drawGrid();
@@ -68,25 +79,34 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
 
         for (int i = 0; i < numbers.length; i++) {
             for (int j = 0; j < numbers[i].length; j++) {
-                Button button = new Button(this);
+                Button button = new Button(new ContextThemeWrapper(this, R.style.CellButtonText), null, 0);
 
                 button.setText(String.valueOf(numbers[i][j]));
+                button.setBackground(cellButtonBackground);
+                if(numbers[i][j] == 2 || numbers[i][j] == 12)
+                {
+                    button.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_grey));
+                }
 
-                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                params.width = 120;
-                params.height = 120;
+
+                GridLayout.LayoutParams params = new GridLayout.LayoutParams(
+                        GridLayout.spec(i, 1f),
+                        GridLayout.spec(j, 1f)
+                );
+                params.width = 0;
+                params.height = 0;
                 button.setLayoutParams(params);
 
                 Cell[][] cells = board.getBoard();
                 if(cells[i][j].getOccupant() != null){
-                    button.setBackgroundColor(Color.parseColor(cells[i][j].getOccupant().getColour()));
+                    button.setBackgroundColor(colorsDark[(cells[i][j].getOccupant().getNumber())]);
                 }
 
                 int row = i;
                 int col = j;
                 button.setOnClickListener(v -> {
                     if(gameModel.processChoice(new int[]{row, col})){
-                        rollDiceTV.setText("Roll the dice!");
+                        rollDiceTV.setText("Roll the dice");
                     }
                     drawGrid();
                 });
@@ -102,10 +122,16 @@ public class MainActivity extends AppCompatActivity implements GameObserver {
         switch (event.getType()) {
             case NEXT_PLAYER_TURN:
                 playerTurnHeadingTV.setText(event.getMessage());
-                playerTurnHeadingTV.setBackgroundColor(Color.parseColor(gameModel.getCurrentPlayer().getColour()));
+
+
+                playerTurnHeadingBackground.setTint(colorsDark[gameModel.getCurrentPlayer().getNumber()]);
+                playerTurnHeadingTV.setBackground(playerTurnHeadingBackground);
                 break;
             case DICE_ROll:
-                rollDiceTV.setText(event.getMessage());
+                if(gameModel.getBoard().validCellExists((int)event.getCargo()))
+                    rollDiceTV.setText(event.getMessage());
+                else
+                    rollDiceTV.setText(event.getMessage() + ", no valid cell exists, replace an opponents token.");
                 break;
             case WILD_DICE_ROLL:
                 rollDiceTV.setText(event.getMessage());

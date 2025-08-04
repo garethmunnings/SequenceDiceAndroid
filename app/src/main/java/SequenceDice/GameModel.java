@@ -16,6 +16,8 @@ public class GameModel {
     private GameEvent currentEvent;
     Board board = new Board();
 
+    boolean playerHasRolled = false;
+
     public GameModel(int numOfPlayers) {
         this.numOfPlayers = numOfPlayers;
         initializePlayers();
@@ -58,11 +60,14 @@ public class GameModel {
     public void nextTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % numOfPlayers;
         currentPlayer = players[currentPlayerIndex];
-        notifyObservers(new GameEvent(GameEventType.NEXT_PLAYER_TURN, "Player " + (currentPlayerIndex + 1) + "'s turn!", currentPlayer));
+        playerHasRolled = false;
+        notifyObservers(new GameEvent(GameEventType.NEXT_PLAYER_TURN, "Player " + (currentPlayerIndex + 1) + "'s turn", currentPlayer));
 
     }
 
     public void rollDice() {
+        if(playerHasRolled)
+            return;
         int[] outcome = dice.roll();
         int total = outcome[0] + outcome[1];
         GameEvent gameEvent;
@@ -71,13 +76,13 @@ public class GameModel {
             //defensive roll
             //remove opponents tokens anywhere except 2 or 12
             List<int[]> opponentsCells = board.findOpponentsCellsNotOnGrey(currentPlayer);
-            gameEvent = new GameEvent(GameEventType.DEFENSIVE_DICE_ROLL, "You rolled " + total + ", defensive roll!", total);
+            gameEvent = new GameEvent(GameEventType.DEFENSIVE_DICE_ROLL, "You rolled " + total + ", defensive roll", total);
         }
         else if(total == 11){
             //wild roll
             List<int[]> emptyCells = board.findAllEmptyCells();
             //place token on any empty space
-            gameEvent = new GameEvent(GameEventType.WILD_DICE_ROLL, "You rolled " + total+ ", wild roll!", total);
+            gameEvent = new GameEvent(GameEventType.WILD_DICE_ROLL, "You rolled " + total+ ", wild roll", total);
         }
         else {
             //check for empty cells of same number as roll
@@ -86,23 +91,30 @@ public class GameModel {
             //prompt user to pick one of the cells
             if(total == 2 || total == 12)
             {
-                gameEvent = new GameEvent(GameEventType.EXTRA_TURN_DICE_ROLL, "You rolled " + total + ", roll again!", total);
+                gameEvent = new GameEvent(GameEventType.EXTRA_TURN_DICE_ROLL, "You rolled " + total + ", roll again", total);
             }
             else{
-                gameEvent = new GameEvent(GameEventType.DICE_ROll, "You rolled " + total, total);
+                gameEvent = new GameEvent(GameEventType.DICE_ROll, "You rolled " + total + ", pick a cell", total);
             }
 
         }
+        playerHasRolled = true;
         notifyObservers(gameEvent);
     }
 
     public boolean processChoice(int[] coords) {
         switch (currentEvent.getType()) {
             case DICE_ROll:
-                if(board.isValidCellCoordinates(coords, (int)currentEvent.getCargo())) {
-                    placeToken(coords);
+                if(board.currentPlayerIsAbleToPlay(currentPlayer, (int)currentEvent.getCargo())) {
+                    if(board.isValidCellCoordinates(coords, (int)currentEvent.getCargo(),currentPlayer)) {
+                        placeToken(coords);
+                        nextTurn();
+                        return true;
+                    }
+                    else return false;
+                }
+                else {
                     nextTurn();
-                    return true;
                 }
                 break;
 
@@ -121,7 +133,7 @@ public class GameModel {
                 }
                 break;
             case EXTRA_TURN_DICE_ROLL:
-                if(board.isValidCellCoordinates(coords, (int)currentEvent.getCargo())) {
+                if(board.isValidCellCoordinates(coords, (int)currentEvent.getCargo(),currentPlayer)) {
                     placeToken(coords);
                     return true;
                 }
