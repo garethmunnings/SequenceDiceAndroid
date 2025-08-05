@@ -27,7 +27,7 @@ public class GameModel {
 
     private void setNumOfTokensInARowForWin(){
         if(numOfPlayers == 2)
-            numOfTokensInARowForWin = 2;
+            numOfTokensInARowForWin = 5;
         else
             numOfTokensInARowForWin = 6;
     }
