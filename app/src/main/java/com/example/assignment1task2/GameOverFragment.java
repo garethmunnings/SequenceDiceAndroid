@@ -18,8 +18,7 @@ import org.w3c.dom.Text;
 
 public class GameOverFragment extends DialogFragment {
     Button homeButton;
-    TextView topWordTV;
-    TextView bottomWordTV;
+    TextView winLabelTV;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,13 +26,15 @@ public class GameOverFragment extends DialogFragment {
         getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         homeButton = view.findViewById(R.id.homeButton);
-        topWordTV = view.findViewById(R.id.titleTopTV);
-        bottomWordTV = view.findViewById(R.id.titleBottomTV);
+        winLabelTV = view.findViewById(R.id.titleTopTV);
+
+
 
         if(getArguments() != null){
             String s = getArguments().getString("player");
-            topWordTV.setText(getArguments().getString(s.split(" ")[0] + " " + s.split(" ")[1]));
-            bottomWordTV.setText(getArguments().getString(s.split(" ")[2]));
+            String top = s.split(" ")[0] + " " + s.split(" ")[1];
+            String bottom = getArguments().getString(s.split(" ")[2]);
+            winLabelTV.setText(getArguments().getString(top));
         }
 
         return view;

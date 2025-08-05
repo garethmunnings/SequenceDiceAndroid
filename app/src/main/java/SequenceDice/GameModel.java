@@ -17,10 +17,19 @@ public class GameModel {
     Board board = new Board();
 
     boolean playerHasRolled = false;
+    int numOfTokensInARowForWin;
 
     public GameModel(int numOfPlayers) {
         this.numOfPlayers = numOfPlayers;
         initializePlayers();
+        setNumOfTokensInARowForWin();
+    }
+
+    private void setNumOfTokensInARowForWin(){
+        if(numOfPlayers == 2)
+            numOfTokensInARowForWin = 2;
+        else
+            numOfTokensInARowForWin = 6;
     }
 
     private boolean initializePlayers(){
@@ -163,8 +172,8 @@ public class GameModel {
 
     public void placeToken(int[] coords) {
         board.placeToken(coords[0], coords[1], currentPlayer);
-        if(board.checkWinCondition(coords[0], coords[1])){
-            notifyObservers(new GameEvent(GameEventType.GAME_OVER, "Player " + currentPlayer.getNumber() + " won the game!", currentPlayer));
+        if(board.checkWinCondition(coords[0], coords[1], numOfTokensInARowForWin)){
+            notifyObservers(new GameEvent(GameEventType.GAME_OVER, "Player " + currentPlayer.getNumber() + " won!", currentPlayer));
         }
     }
     public void removeToken(int[] coords) {

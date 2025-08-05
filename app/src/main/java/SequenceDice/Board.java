@@ -150,14 +150,14 @@ public class Board {
         board[row][col].setOccupant(null);
     }
 
-    public boolean checkWinCondition(int row, int col) {
+    public boolean checkWinCondition(int row, int col, int numOfTokensInARow) {
         Cell cell = board[row][col];
         Player player = cell.getOccupant();
 
-        return(checkRow(row, player) || checkCol(col, player) || checkDiagonal(row, col, player));
+        return(checkRow(row, player, numOfTokensInARow) || checkCol(col, player, numOfTokensInARow) || checkDiagonal(row, col, player, numOfTokensInARow));
     }
 
-    public boolean checkRow(int row, Player player){
+    public boolean checkRow(int row, Player player, int numOfTokensInARow){
         int streak = 0;
 
         for (int col = 0; col < board[row].length; col++) {
@@ -165,7 +165,7 @@ public class Board {
 
             if (occupant != null && occupant.isOnSameTeam(player)) {
                 streak++;
-                if (streak == 5) {
+                if (streak == numOfTokensInARow) {
                     return true;
                 }
             } else {
@@ -176,7 +176,7 @@ public class Board {
         return false;
     }
 
-    public boolean checkCol(int col, Player player){
+    public boolean checkCol(int col, Player player,int numOfTokensInARow){
         int streak = 0;
 
         for (int row = 0; row < board[col].length; row++) {
@@ -184,7 +184,7 @@ public class Board {
 
             if (occupant != null && occupant.isOnSameTeam(player)) {
                 streak++;
-                if (streak == 5) {
+                if (streak == numOfTokensInARow) {
                     return true;
                 }
             } else {
@@ -195,14 +195,14 @@ public class Board {
         return false;
     }
 
-    public boolean checkDiagonal(int row, int col, Player player) {
+    public boolean checkDiagonal(int row, int col, Player player, int numOfTokensInARow) {
         // Down-right (↘)
-        if (countDirection(row, col, 1, 1, player) >= 5) {
+        if (countDirection(row, col, 1, 1, player) >= numOfTokensInARow) {
             return true;
         }
 
         // Down-left (↙)
-        if (countDirection(row, col, 1, -1, player) >= 5) {
+        if (countDirection(row, col, 1, -1, player) >= numOfTokensInARow) {
             return true;
         }
 

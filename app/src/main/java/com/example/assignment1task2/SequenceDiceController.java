@@ -120,6 +120,7 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
                 GameOverFragment gof = new GameOverFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("player", event.getMessage());
+                gof.setArguments(bundle);
                 gof.show(getSupportFragmentManager(), "Game Over");
                 break;
         }

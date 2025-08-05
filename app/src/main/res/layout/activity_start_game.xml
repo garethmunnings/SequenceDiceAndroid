@@ -63,7 +63,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        app:layout_constraintVertical_bias="0.109">
+        app:layout_constraintVertical_bias="0.158">
 
     </TextView>
 
@@ -71,20 +71,22 @@
         android:id="@+id/optionGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:background="@drawable/radio_group_background"
+        android:orientation="horizontal"
         android:padding="4dp"
         app:layout_constraintBottom_toTopOf="@+id/playButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subtitleText">
+        app:layout_constraintTop_toBottomOf="@+id/subtitleText"
+        app:layout_constraintVertical_bias="0.16">
 
         <RadioButton
             android:id="@+id/twoPlayer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
             android:buttonTint="@color/black"
+            android:checked="true"
 
             android:text="2" />
 
@@ -118,5 +120,5 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.775" />
+        app:layout_constraintVertical_bias="0.706" />
 </androidx.constraintlayout.widget.ConstraintLayout>
