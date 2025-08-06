@@ -1,6 +1,5 @@
 package com.example.assignment1task2;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import android.util.DisplayMetrics;
@@ -12,10 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.assignment1task2.R;
-
-import org.w3c.dom.Text;
-
 public class GameOverFragment extends DialogFragment {
     Button homeButton;
     TextView winLabelTV;
@@ -26,15 +21,11 @@ public class GameOverFragment extends DialogFragment {
         getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         homeButton = view.findViewById(R.id.homeButton);
-        winLabelTV = view.findViewById(R.id.titleTopTV);
-
-
+        winLabelTV = view.findViewById(R.id.winLabelTV);
 
         if(getArguments() != null){
             String s = getArguments().getString("player");
-            String top = s.split(" ")[0] + " " + s.split(" ")[1];
-            String bottom = getArguments().getString(s.split(" ")[2]);
-            winLabelTV.setText(getArguments().getString(top));
+            winLabelTV.setText(s);
         }
 
         return view;
@@ -43,8 +34,6 @@ public class GameOverFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-
 
         if (getDialog() != null && getDialog().getWindow() != null) {
             Window window = getDialog().getWindow();
@@ -55,9 +44,8 @@ public class GameOverFragment extends DialogFragment {
 
             int screenHeight = displayMetrics.heightPixels;
 
-
             int dialogHeight = (int) (screenHeight * 0.50);
-            window.setLayout(dialogHeight, ViewGroup.LayoutParams.WRAP_CONTENT);
+            window.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             window.setDimAmount(0.5f); // Optional: dim background
         }
         getDialog().getWindow().setDimAmount(0.5f); // Maintain dimming

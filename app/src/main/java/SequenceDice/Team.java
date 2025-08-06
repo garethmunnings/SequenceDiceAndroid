@@ -6,6 +6,7 @@ public class Team {
     Player[] players;
 
     public Team(String colour, int number, Player[] ps) {
+        this.colour = colour;
         players = new Player[2];
         this.number = number;
         this.players[0] = ps[0];

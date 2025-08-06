@@ -10,7 +10,7 @@ public class GameModel {
     private int currentPlayerIndex = -1;
     private Player[] players;
     private Team[] teams;
-    private String[] colours = {"Red", "Green", "Blue"};
+    private String[] colours = {"Green", "Blue", "Red"};
     private Dice dice = new Dice();
 
     private GameEvent currentEvent;
@@ -27,9 +27,9 @@ public class GameModel {
 
     private void setNumOfTokensInARowForWin(){
         if(numOfPlayers == 2)
-            numOfTokensInARowForWin = 5;
+            numOfTokensInARowForWin = 1;
         else
-            numOfTokensInARowForWin = 6;
+            numOfTokensInARowForWin = 1;
     }
 
     private boolean initializePlayers(){
@@ -63,7 +63,7 @@ public class GameModel {
         if(teams.length == 0)
             return null;
         for(Team team: teams){
-            if(team.getPlayers()[0] == currentPlayer || team.getPlayers()[1] == currentPlayer)
+            if(team.getPlayers()[0].equals(currentPlayer) || team.getPlayers()[1].equals(currentPlayer))
                 return team;
         }
         return null;
@@ -80,6 +80,7 @@ public class GameModel {
         currentPlayerIndex = (currentPlayerIndex + 1) % numOfPlayers;
         currentPlayer = players[currentPlayerIndex];
         playerHasRolled = false;
+
         notifyObservers(new GameEvent(GameEventType.NEXT_PLAYER_TURN, "Player " + (currentPlayerIndex + 1) + "'s turn", currentPlayer));
 
     }
@@ -173,7 +174,10 @@ public class GameModel {
     public void placeToken(int[] coords) {
         board.placeToken(coords[0], coords[1], currentPlayer);
         if(board.checkWinCondition(coords[0], coords[1], numOfTokensInARowForWin)){
-            notifyObservers(new GameEvent(GameEventType.GAME_OVER, "Player " + currentPlayer.getNumber() + " won!", currentPlayer));
+            if(numOfPlayers < 4)
+                notifyObservers(new GameEvent(GameEventType.GAME_OVER, "Player " + (currentPlayer.getNumber() + 1) + " wins", currentPlayer));
+            else
+                notifyObservers(new GameEvent(GameEventType.GAME_OVER, getCurrentTeam().colour + " team wins", currentPlayer));
         }
     }
     public void removeToken(int[] coords) {
