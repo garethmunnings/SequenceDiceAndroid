@@ -8,6 +8,40 @@
     tools:context=".StartGame"
     android:background="@color/dark_blue">
 
+    <Button
+        android:id="@+id/rulesButton"
+        style="@style/RollDiceButtonText"
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+        android:background="@drawable/roll_dice_button_background"
+        android:text="Rules"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.344"
+
+        app:layout_constraintStart_toEndOf="@+id/leaderBoardButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.934">
+
+    </Button>
+
+    <Button
+        android:id="@+id/leaderBoardButton"
+        style="@style/RollDiceButtonText"
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+        android:background="@drawable/roll_dice_button_background"
+        android:text="Leaderboard"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.258"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.934">
+
+    </Button>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="295dp"
@@ -112,7 +146,6 @@
         android:layout_height="40dp"
         android:layout_gravity="center"
         android:background="@drawable/roll_dice_button_background"
-        android:fontFamily="sans-serif-light"
         android:text="Play"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"

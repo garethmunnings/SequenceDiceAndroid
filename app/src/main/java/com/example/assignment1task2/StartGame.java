@@ -24,6 +24,11 @@ public class StartGame extends AppCompatActivity {
             return insets;
         });
 
+        Button rulesButton = findViewById(R.id.rulesButton);
+        rulesButton.setOnClickListener(v -> {
+            Intent intent = new Intent(StartGame.this, RulesActivity.class);
+            startActivity(intent);
+        });
 
         RadioGroup group = findViewById(R.id.optionGroup);
         group.setOnCheckedChangeListener((group1, checkedId) -> {
