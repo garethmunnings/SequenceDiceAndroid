@@ -14,7 +14,6 @@ import androidx.fragment.app.DialogFragment;
 public class GameOverFragment extends DialogFragment {
     Button homeButton;
     TextView winLabelTV;
-
     TextView roundsPlayedTV;
     TextView tokensPlacedTV;
     TextView tokensRemovedTV;
