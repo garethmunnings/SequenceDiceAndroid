@@ -28,10 +28,11 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@color/dark_blue"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@+id/textView11">
+        app:layout_constraintTop_toBottomOf="@+id/textView11"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -148,6 +149,25 @@
                 android:text="5. If an 11 is rolled (called a wild roll), then the player must place one of their tokens in any empty cell on the board."
                 android:textColor="@color/white"
                 android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:text="View the rules on YouTube here:"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/youtubeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/RollDiceButtonText"
+                android:background="@drawable/roll_dice_button_background"
+                android:text="YouTube"
+                android:layout_gravity="center"/>
 
         </LinearLayout>
     </ScrollView>
