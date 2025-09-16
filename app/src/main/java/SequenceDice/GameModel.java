@@ -22,9 +22,15 @@ public class GameModel {
     boolean playerHasRolled = false;
     int numOfTokensInARowForWin;
 
+    private int numberOfRoundsPlayed;
+    private int numberOfTokensPlaced;
+    private int numberOfTokensRemoved;
+
     public GameModel(int numOfPlayers, String[] playerNames) {
         this.numOfPlayers = numOfPlayers;
         this.playerNames = playerNames;
+        numberOfRoundsPlayed = 0;
+        numberOfTokensPlaced = 0;
         initializePlayers();
         setNumOfTokensInARowForWin();
     }
@@ -95,6 +101,7 @@ public class GameModel {
         if(playerHasRolled)
             return;
 
+        numberOfRoundsPlayed++;
         //get what dice outcome
         int[] outcome = dice.roll();
         int total = outcome[0] + outcome[1];
@@ -178,6 +185,7 @@ public class GameModel {
 
     public void placeToken(int[] coords) {
         board.placeToken(coords[0], coords[1], currentPlayer);
+        numberOfTokensPlaced++;
         if(board.checkWinCondition(coords[0], coords[1], numOfTokensInARowForWin)){
             if(numOfPlayers < 4)
                 notifyObservers(new GameEvent(GameEventType.GAME_OVER, "Player " + (currentPlayer.getNumber() + 1) + " wins", currentPlayer));
@@ -186,6 +194,7 @@ public class GameModel {
         }
     }
     public void removeToken(int[] coords) {
+        numberOfTokensRemoved++;
         board.removeToken(coords[0], coords[1]);
     }
 
@@ -210,4 +219,8 @@ public class GameModel {
     public int getNumOfPlayers(){
         return numOfPlayers;
     }
+
+    public int getRoundsPlayed(){return numberOfRoundsPlayed;}
+    public int getTokensPlaced(){return numberOfTokensPlaced;}
+    public int getTokensRemoved(){return numberOfTokensRemoved;}
 }

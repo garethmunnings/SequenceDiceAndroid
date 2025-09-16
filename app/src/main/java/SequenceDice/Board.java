@@ -196,12 +196,10 @@ public class Board {
     }
 
     public boolean checkDiagonal(int row, int col, Player player, int numOfTokensInARow) {
-        // Down-right (↘)
         if (countDirection(row, col, 1, 1, player) >= numOfTokensInARow) {
             return true;
         }
 
-        // Down-left (↙)
         if (countDirection(row, col, 1, -1, player) >= numOfTokensInARow) {
             return true;
         }
@@ -214,7 +212,6 @@ public class Board {
         int rows = board.length;
         int cols = board[0].length;
 
-        // Go backward in direction first
         int r = row;
         int c = col;
         while (r >= 0 && r < rows && c >= 0 && c < cols &&
@@ -225,7 +222,6 @@ public class Board {
             c -= dCol;
         }
 
-        // Go forward in direction
         r = row + dRow;
         c = col + dCol;
         while (r >= 0 && r < rows && c >= 0 && c < cols &&
