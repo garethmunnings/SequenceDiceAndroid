@@ -7,6 +7,7 @@ package SequenceDice;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -31,16 +32,17 @@ public class Leaderboard {
             int value = (int) entry.getValue();
             leaderboard.add(new Pair<>(key, value));
         }
+
         return leaderboard;
     }
 
     public void updateLeaderboard(String player, int score){
-        if(prefs.getString(player, null) != null){
-            int oldScore = Integer.parseInt(prefs.getString(player, null));
+        if(prefs.contains(player)){
+            int oldScore = prefs.getInt(player, 0);
             score += oldScore;
         }
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(player, String.valueOf(score));
-
+        editor.putInt(player, score);
+        editor.apply();
     }
 }

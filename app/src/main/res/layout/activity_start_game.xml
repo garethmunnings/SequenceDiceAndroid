@@ -19,14 +19,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.344"
 
-        app:layout_constraintStart_toEndOf="@+id/leaderBoardButton"
+        app:layout_constraintStart_toEndOf="@+id/leaderboardButton"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.934">
 
     </Button>
 
     <Button
-        android:id="@+id/leaderBoardButton"
+        android:id="@+id/leaderboardButton"
         style="@style/RollDiceButtonText"
         android:layout_width="125dp"
         android:layout_height="40dp"
@@ -46,9 +46,8 @@
         android:id="@+id/constraintLayout"
         android:layout_width="295dp"
         android:layout_height="216dp"
-        android:layout_marginTop="192dp"
+        android:layout_marginTop="72dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -85,6 +84,142 @@
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/optionGroup"
+        >
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/blueTeamLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BLUE TEAM"
+            android:fontFamily="@font/raleway_extrabold"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:background="@drawable/player_turn_heading_background"
+            android:backgroundTint="@color/blue"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:padding="5dp"/>
+
+        <LinearLayout
+            android:id="@+id/player1LL"
+            android:layout_marginBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/radio_group_background"
+            android:paddingHorizontal="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Player 1 name"
+                android:fontFamily="@font/raleway_semibold_italic"
+                android:textColor="@color/black"
+                android:textSize="16dp"/>
+
+            <EditText
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/player2LL"
+            android:layout_marginBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/radio_group_background"
+            android:paddingHorizontal="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Player 2 name"
+                android:fontFamily="@font/raleway_semibold_italic"
+                android:textColor="@color/black"
+                android:textSize="16dp"/>
+
+            <EditText
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/greenTeamLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GREEN TEAM"
+            android:fontFamily="@font/raleway_extrabold"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:background="@drawable/player_turn_heading_background"
+            android:backgroundTint="@color/green"
+            android:layout_gravity="center"
+            android:padding="5dp"
+            android:layout_marginBottom="5dp"/>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/player3LL"
+            android:layout_marginBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/radio_group_background"
+            android:paddingHorizontal="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Player 3 name"
+                android:fontFamily="@font/raleway_semibold_italic"
+                android:textColor="@color/black"
+                android:textSize="16dp"/>
+
+            <EditText
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/player4LL"
+            android:layout_marginBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/radio_group_background"
+            android:paddingHorizontal="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Player 4 name"
+                android:fontFamily="@font/raleway_semibold_italic"
+                android:textColor="@color/black"
+                android:textSize="16dp"/>
+
+            <EditText
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
     <TextView
         android:id="@+id/subtitleText"
         android:layout_width="wrap_content"
@@ -97,7 +232,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        app:layout_constraintVertical_bias="0.158">
+        app:layout_constraintVertical_bias="0.014">
 
     </TextView>
 
@@ -153,5 +288,5 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.706" />
+        app:layout_constraintVertical_bias="0.865" />
 </androidx.constraintlayout.widget.ConstraintLayout>

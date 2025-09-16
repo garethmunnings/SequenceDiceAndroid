@@ -3,6 +3,7 @@ package com.example.assignment1task2;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,8 @@ import SequenceDice.Cell;
 import SequenceDice.GameEvent;
 import SequenceDice.GameModel;
 import SequenceDice.GameObserver;
+import SequenceDice.Leaderboard;
+import SequenceDice.Player;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,8 +43,8 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-
         colors = new int[]{ContextCompat.getColor(this, R.color.green), ContextCompat.getColor(this, R.color.blue), ContextCompat.getColor(this, R.color.red)};
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -70,7 +73,8 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
         Intent intent = getIntent();
 
         int numberOfPlayers = intent.getIntExtra("numberOfPlayers", 2);
-        gameModel = new GameModel(numberOfPlayers);
+        String[] playerNames = intent.getStringArrayExtra("playerNamesList");
+        gameModel = new GameModel(numberOfPlayers, playerNames);
         gameModel.addObserver(this);
 
         drawGrid();
@@ -122,6 +126,12 @@ public class SequenceDiceController extends AppCompatActivity implements GameObs
                 bundle.putString("player", event.getMessage());
                 gof.setArguments(bundle);
                 gof.show(getSupportFragmentManager(), "Game Over");
+
+                //update leaderboard with playernames
+                Leaderboard lb = new Leaderboard(this);
+                Player winner = (Player)event.getCargo();
+                Log.d("winner", winner.getName());
+                lb.updateLeaderboard(winner.getName(), 1);
                 break;
         }
     }

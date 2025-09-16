@@ -1,11 +1,14 @@
 package SequenceDice;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameModel {
     private List<GameObserver> observers = new ArrayList<>();
     private final int numOfPlayers;
+    private String[] playerNames;
     private Player currentPlayer;
     private int currentPlayerIndex = -1;
     private Player[] players;
@@ -19,17 +22,18 @@ public class GameModel {
     boolean playerHasRolled = false;
     int numOfTokensInARowForWin;
 
-    public GameModel(int numOfPlayers) {
+    public GameModel(int numOfPlayers, String[] playerNames) {
         this.numOfPlayers = numOfPlayers;
+        this.playerNames = playerNames;
         initializePlayers();
         setNumOfTokensInARowForWin();
     }
 
     private void setNumOfTokensInARowForWin(){
         if(numOfPlayers == 2)
-            numOfTokensInARowForWin = 5;
+            numOfTokensInARowForWin = 2;
         else
-            numOfTokensInARowForWin = 6;
+            numOfTokensInARowForWin = 2;
     }
 
     private boolean initializePlayers(){
@@ -37,17 +41,18 @@ public class GameModel {
         if(numOfPlayers == 2 || numOfPlayers == 3){
             players = new Player[numOfPlayers];
             for (int i = 0; i < numOfPlayers; i++) {
-                Player player = new Player(i, colours[i]);
+                Player player = new Player(i, colours[i], playerNames[i]);
+                Log.d("Player name", playerNames[i]);
                 players[i] = player;
             }
             return true;
         }
         //if teams game
         else if(numOfPlayers == 4){
-            Player player1 = new Player(1, colours[0]);
-            Player player2 = new Player(2, colours[1]);
-            Player player3 = new Player(3, colours[0]);
-            Player player4 = new Player(4, colours[1]);
+            Player player1 = new Player(1, colours[0], playerNames[0]);
+            Player player2 = new Player(2, colours[1], playerNames[1]);
+            Player player3 = new Player(3, colours[0], playerNames[2]);
+            Player player4 = new Player(4, colours[1], playerNames[3]);
 
             players = new Player[]{player1, player2, player3, player4};
 
@@ -177,7 +182,7 @@ public class GameModel {
             if(numOfPlayers < 4)
                 notifyObservers(new GameEvent(GameEventType.GAME_OVER, "Player " + (currentPlayer.getNumber() + 1) + " wins", currentPlayer));
             else
-                notifyObservers(new GameEvent(GameEventType.GAME_OVER, getCurrentTeam().colour + " team wins", currentPlayer));
+                notifyObservers(new GameEvent(GameEventType.GAME_OVER, getCurrentTeam().colour + " team wins", getCurrentTeam()));
         }
     }
     public void removeToken(int[] coords) {
