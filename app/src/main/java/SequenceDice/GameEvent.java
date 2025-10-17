@@ -1,6 +1,10 @@
 package SequenceDice;
 
-public class GameEvent {
+import java.io.Serializable;
+
+public class GameEvent implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private GameEventType type;
     private String message;
     private Object cargo;

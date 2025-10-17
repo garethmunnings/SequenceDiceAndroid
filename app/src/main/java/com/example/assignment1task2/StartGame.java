@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +16,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+
+import Network.Client;
+import Network.ClientManager;
 
 public class StartGame extends AppCompatActivity {
     private int numberOfPlayers = 2;
@@ -72,39 +75,30 @@ public class StartGame extends AppCompatActivity {
                 player4LL.setVisibility(View.VISIBLE);
             }
         });
+
         Button playButton = findViewById(R.id.playButton);
         playButton.setOnClickListener(v -> {
             String[] playerNames = new String[numberOfPlayers];
-            if(numberOfPlayers == 2){
-                EditText et1 = (EditText)player1LL.getChildAt(1);
-                playerNames[0] = et1.getText().toString();
-                EditText et2 = (EditText)player2LL.getChildAt(1);
-                playerNames[1] = et2.getText().toString();
+            LinearLayout[] playerLayouts = {player1LL, player2LL, player3LL, player4LL};
+
+            for (int i = 0; i < numberOfPlayers; i++) {
+                EditText editText = (EditText) playerLayouts[i].getChildAt(1);
+                playerNames[i] = editText.getText().toString();
             }
-            else if(numberOfPlayers == 3){
-                EditText et1 = (EditText)player1LL.getChildAt(1);
-                playerNames[0] = et1.getText().toString();
-                EditText et2 = (EditText)player2LL.getChildAt(1);
-                playerNames[1] = et2.getText().toString();
-                EditText et3 = (EditText)player3LL.getChildAt(1);
-                playerNames[2] = et3.toString();
-            }
-            else{
-                EditText et1 = (EditText)player1LL.getChildAt(1);
-                playerNames[0] = et1.getText().toString();
-                EditText et2 = (EditText)player2LL.getChildAt(1);
-                playerNames[1] = et2.getText().toString();
-                EditText et3 = (EditText)player3LL.getChildAt(1);
-                playerNames[2] = et3.toString();
-                EditText et4 = (EditText)player4LL.getChildAt(1);
-                playerNames[3] = et4.toString();
-            }
-            Intent intent = new Intent(StartGame.this, SequenceDiceController.class);
-            intent.putExtra("numberOfPlayers", numberOfPlayers);
-            intent.putExtra("playerNamesList", playerNames);
-            startActivity(intent);
+
+            Toast toast = new Toast(this);
+            toast.setText("Waiting for other players to join the queue");
+            toast.show();
+
+            new Thread(() -> {
+                try {
+                    Client client = new Client(StartGame.this, "10.0.2.2", 12345, numberOfPlayers);
+                    client.run(); // Or just let the Client constructor handle its own listener thread
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
         });
-
-
     }
 }

@@ -2,15 +2,11 @@ package SequenceDice;
 
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GameModel {
-    private List<GameObserver> observers = new ArrayList<>();
+    private GameObserver observer;
     private final int numOfPlayers;
     private String[] playerNames;
     private Player currentPlayer;
-    private int currentPlayerIndex = -1;
     private Player[] players;
     private Team[] teams;
     private String[] colours = {"Green", "Blue", "Red"};
@@ -26,7 +22,7 @@ public class GameModel {
     private int numberOfTokensPlaced;
     private int numberOfTokensRemoved;
 
-    public GameModel(int numOfPlayers, String[] playerNames) {
+    public GameModel(int numOfPlayers) {
         this.numOfPlayers = numOfPlayers;
         this.playerNames = playerNames;
         numberOfRoundsPlayed = 0;
@@ -47,8 +43,7 @@ public class GameModel {
         if(numOfPlayers == 2 || numOfPlayers == 3){
             players = new Player[numOfPlayers];
             for (int i = 0; i < numOfPlayers; i++) {
-                Player player = new Player(i, colours[i], playerNames[i]);
-                Log.d("Player name", playerNames[i]);
+                Player player = new Player(i + 1, colours[i], "name");
                 players[i] = player;
             }
             return true;
@@ -80,102 +75,51 @@ public class GameModel {
         return null;
     }
 
-    public void addObserver(GameObserver observer) {
-        observers.add(observer);
-    }
-    public void startGame(){
-        nextTurn();
+    public void setObserver(GameObserver observer) {
+        this.observer = observer;
     }
 
-    public void nextTurn() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % numOfPlayers;
-        currentPlayer = players[currentPlayerIndex];
+
+    /**
+     * @param playerNumber sent from the server, currentplayer should be updated to this
+     */
+    public void nextTurn(int playerNumber) {
+        currentPlayer = players[playerNumber-1];
         playerHasRolled = false;
-
-        notifyObservers(new GameEvent(GameEventType.NEXT_PLAYER_TURN, "Player " + (currentPlayerIndex + 1) + "'s turn", currentPlayer));
-
-    }
-
-    public void rollDice() {
-        //check if player has already rolled this turn
-        if(playerHasRolled)
-            return;
-
-        numberOfRoundsPlayed++;
-        //get what dice outcome
-        int[] outcome = dice.roll();
-        int total = outcome[0] + outcome[1];
-
-        //check if player can play a move
-        if(!board.currentPlayerIsAbleToPlay(currentPlayer, total)) {
-            notifyObservers(new GameEvent(GameEventType.NO_POSSIBLE_MOVE, "You rolled " + total + ", you no valid moves.", currentPlayer));
-            return;
-        }
-
-        //notify controller of roll
-        GameEvent gameEvent;
-
-        if(total == 10){
-            //defensive roll
-            //remove opponents tokens anywhere except 2 or 12
-            gameEvent = new GameEvent(GameEventType.DEFENSIVE_DICE_ROLL, "You rolled " + total + ", defensive roll", total);
-            playerHasRolled = true;
-        }
-        else if(total == 11){
-            //wild roll
-            //place token on any empty space
-            gameEvent = new GameEvent(GameEventType.WILD_DICE_ROLL, "You rolled " + total+ ", wild roll", total);
-            playerHasRolled = true;
-        }
-        else {
-            //double roll
-            if(total == 2 || total == 12)
-            {
-                gameEvent = new GameEvent(GameEventType.EXTRA_TURN_DICE_ROLL, "You rolled " + total + ", pick a cell and roll again", total);
-            }
-            else{
-                gameEvent = new GameEvent(GameEventType.DICE_ROll, "You rolled " + total + ", pick a cell", total);
-                playerHasRolled = true;
-            }
-
-        }
-
-        notifyObservers(gameEvent);
     }
 
     public boolean processChoice(int[] coords) {
         switch (currentEvent.getType()) {
-            case DICE_ROll:
+            case DICE_ROll_OUTCOME:
                 if(board.currentPlayerIsAbleToPlay(currentPlayer, (int)currentEvent.getCargo())) {
                     if(board.isValidCellCoordinates(coords, (int)currentEvent.getCargo(),currentPlayer)) {
+
                         placeToken(coords);
-                        nextTurn();
+                        notifyObservers(new GameEvent(GameEventType.PLACE_TOKEN, String.valueOf(getCurrentPlayer().getNumber()), coords));
                         return true;
                     }
                     else return false;
-                }
-                else {
-                    nextTurn();
                 }
                 break;
 
             case WILD_DICE_ROLL:
                 if(board.isEmptyCellCoordinates(coords)){
                     placeToken(coords);
-                    nextTurn();
+                    notifyObservers(new GameEvent(GameEventType.PLACE_TOKEN, String.valueOf(getCurrentPlayer().getNumber()), coords));
                     return true;
                 }
                 break;
             case DEFENSIVE_DICE_ROLL:
                 if(board.isOppenentsCellsNotOnGrey(coords, currentPlayer)) {
                     removeToken(coords);
-                    nextTurn();
+                    notifyObservers(new GameEvent(GameEventType.REMOVE_TOKEN, "Player " + getCurrentPlayer().getNumber(), coords));
                     return true;
                 }
                 break;
             case EXTRA_TURN_DICE_ROLL:
                 if(board.isValidCellCoordinates(coords, (int)currentEvent.getCargo(),currentPlayer)) {
                     placeToken(coords);
+                    notifyObservers(new GameEvent(GameEventType.PLACE_TOKEN, String.valueOf(getCurrentPlayer().getNumber()), coords));
                     return true;
                 }
                 break;
@@ -186,12 +130,6 @@ public class GameModel {
     public void placeToken(int[] coords) {
         board.placeToken(coords[0], coords[1], currentPlayer);
         numberOfTokensPlaced++;
-        if(board.checkWinCondition(coords[0], coords[1], numOfTokensInARowForWin)){
-            if(numOfPlayers < 4)
-                notifyObservers(new GameEvent(GameEventType.GAME_OVER, "Player " + (currentPlayer.getNumber() + 1) + " wins", currentPlayer));
-            else
-                notifyObservers(new GameEvent(GameEventType.GAME_OVER, getCurrentTeam().colour + " team wins", getCurrentTeam()));
-        }
     }
     public void removeToken(int[] coords) {
         numberOfTokensRemoved++;
@@ -202,16 +140,15 @@ public class GameModel {
         return currentPlayer;
     }
     public Player getPreviousPlayer(){
-        return players[(currentPlayerIndex - 1 + numOfPlayers) % numOfPlayers];
+        return players[(currentPlayer.getNumber() - 2 + numOfPlayers) % numOfPlayers];
     }
 
     private void notifyObservers(GameEvent gameEvent) {
-
         currentEvent = gameEvent;
-        for (GameObserver observer : observers) {
-            observer.onGameEvent(gameEvent);
-        }
+        observer.onGameEvent(gameEvent);
     }
+
+    public void setCurrentEvent(GameEvent event){this.currentEvent = event;}
 
     public Board getBoard() {
         return board;
@@ -223,4 +160,6 @@ public class GameModel {
     public int getRoundsPlayed(){return numberOfRoundsPlayed;}
     public int getTokensPlaced(){return numberOfTokensPlaced;}
     public int getTokensRemoved(){return numberOfTokensRemoved;}
+
+
 }
