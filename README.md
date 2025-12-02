@@ -3,6 +3,11 @@
 A mobile remake of the board game **Sequence Dice**, built with **Java** and **Android**.  
 This project implements the full game logic and rules of Sequence Dice in an interactive Android app.
 
+<p align="center">
+   <img width="350" alt="Screenshot_2" src="https://github.com/user-attachments/assets/2170d641-fbe0-45e5-9859-ddf3c1c8323d" />
+   <img width="350" alt="Screenshot_1" src="https://github.com/user-attachments/assets/3fec6f48-62df-4194-9edc-6df5dae16fcf" />
+</p>
+
 ## 📜 Game Rules
 
 Sequence Dice is a variation of the Sequence board game designed for **2–4 players**.  
